@@ -31,6 +31,10 @@ class Robot(ABC):
         self.battery = battery
         Robot.population += 1
         Robot.fleet.append(self)
+        
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
     
     def use_battery(self, amount):
         if amount > self.battery:
@@ -169,5 +173,43 @@ print(f"Name: {CleaningRobot.perform_task.__name__}")
 cr3 = CleaningRobot("CleaningRobot3", battery=70)
 result = cr3.perform_task(50)
 print(f"Result: {result}")
+
+print("\n--------------------\n")
+
+print("SAMPLE ALTERNATIVE CONSTRUCTOR:")
+config = {"name": "DroneRobot3", "battery": 15}
+dr3 = DroneRobot.from_config(config)
+print(f"Created from config: {dr3}")
+
+print("\n--------------------\n")
+
+class BadWeaponRobot:
+    weapons = []
+    
+    def equip(self, w):
+        self.weapons.append(w)
+
+wr1 = BadWeaponRobot()
+wr2 = BadWeaponRobot()
+wr1.equip("Laser")
+
+print("BUG:")
+print(f"wr1 weapons: {wr1.weapons}")
+print(f"wr2 weapons: {wr2.weapons}")
+
+class GoodWeaponRobot:
+    def __init__(self):
+        self.weapons = []
+        
+    def equip(self, w):
+        self.weapons.append(w)
+
+wr3 = GoodWeaponRobot()
+wr4 = GoodWeaponRobot()
+wr3.equip("Missile")
+
+print("\nFIX:")
+print(f"wr3 weapons: {wr3.weapons}")
+print(f"wr4 weapons: {wr4.weapons}")
 
 print("\n--------------------\n")
