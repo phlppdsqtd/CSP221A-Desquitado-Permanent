@@ -3,19 +3,18 @@ from abc import ABC, abstractmethod
 class Robot(ABC):
     manufacturer = "PhilTech"
     population = 0
-    
+    fleet = []
+
     def __init__(self, name, battery=100):
         self.name = name
         self.battery = battery
         Robot.population += 1
+        Robot.fleet.append(self)
     
     def use_battery(self, amount):
         self.battery -= amount
         if self.battery < 0:
             self.battery = 0
-            
-    def status(self):
-        return f"{self.name}: {self.battery}% battery"
         
     @property
     def battery(self):
@@ -34,7 +33,7 @@ class Robot(ABC):
         pass
       
     def __str__(self):
-        return f"{self.name} ({self.battery}% battery)"
+        return f"{self.name}: {self.battery}% battery"
 
     def __repr__(self):
         return f"{self.__class__.__name__}(name={self.name!r}, battery={self.battery!r})"
@@ -70,10 +69,13 @@ class CleaningRobot(Robot):
         self.dust_collected = min(self.dust_capacity, self.dust_collected + amount)
         self.use_battery(10)
         return f"{self.name} cleaned {amount}g dust. Remaining battery: {self.battery}%"
+    
+    def __str__(self):
+        return f"{self.name}: {self.battery}% battery (Dust: {self.dust_collected}g)"
 
 cr1 = CleaningRobot("CleaningRobot1", dust_capacity=200)
 print(cr1.name, cr1.dust_capacity)
-print(cr1.status())
+print(cr1)
 print(f"Population: {Robot.population}\n")
 
 print(cr1.dust_collected)
@@ -92,12 +94,30 @@ class DroneRobot(Robot):
         self.current_altitude = min(self.max_altitude, self.current_altitude + altitude)
         self.use_battery(20)
         return f"{self.name} flew {altitude}m high. Remaining battery: {self.battery}%"
+    
+    def __str__(self):
+        return f"{self.name}: {self.battery}% battery (Altitude: {self.current_altitude}m)"
 
 dr1 = DroneRobot("DroneRobot1")
 print(dr1.name, dr1.max_altitude)
-print(dr1.status())
+print(dr1)
 print(f"Population: {Robot.population}\n")
 
 print(dr1.current_altitude)
 print(dr1.perform_task(100))
 print(dr1.current_altitude)
+
+print("\n--------------------\n")
+
+def fleet_report(robots):
+    for r in robots:
+        print(r)
+
+print("FLEET REPORT (ALL):")       
+fleet_report(Robot.fleet)
+
+specific_fleet = [r2, cr1, dr1]
+print("\nFLEET REPORT (SPECIFIC LIST):")     
+fleet_report(specific_fleet)
+
+print("\n--------------------\n")
