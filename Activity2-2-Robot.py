@@ -1,7 +1,16 @@
 from abc import ABC, abstractmethod
-
+from functools import wraps
 import logging
 logging.basicConfig(level=logging.INFO)
+
+def log_action(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        logging.info(f"Calling {func.__name__}")
+        result = func(*args, **kwargs)
+        logging.info(f"Finished {func.__name__}")
+        return result
+    return wrapper
 
 class InsufficientBatteryError(Exception):
     def __init__(self, robot_name, required, available):
@@ -76,7 +85,8 @@ class CleaningRobot(Robot):
         super().__init__(name, battery)
         self.dust_capacity = dust_capacity
         self.dust_collected = 0
-        
+    
+    @log_action   
     def perform_task(self, amount=50):
         self.use_battery(10)
         self.dust_collected = min(self.dust_capacity, self.dust_collected + amount)
@@ -151,3 +161,13 @@ run_task_safely(cr2, amount=100)
 dr2 = DroneRobot("DroneRobot2", 10)
 print("SAMPLE FAIL:")
 run_task_safely(dr2, altitude=200)
+
+print("--------------------\n")
+
+print("SAMPLE DECORATOR:")
+print(f"Name: {CleaningRobot.perform_task.__name__}")
+cr3 = CleaningRobot("CleaningRobot3", battery=70)
+result = cr3.perform_task(50)
+print(f"Result: {result}")
+
+print("\n--------------------\n")
