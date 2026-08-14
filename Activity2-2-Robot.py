@@ -40,10 +40,7 @@ class Robot(ABC):
         if amount > self.battery:
             raise InsufficientBatteryError(self.name, amount, self.battery)
         self.battery -= amount
-
-    def speak(self):
-        return f"{self.name} says: SKIBIDOO SIX SEVEN"
-    
+        
     @property
     def battery(self):
         return self._battery
