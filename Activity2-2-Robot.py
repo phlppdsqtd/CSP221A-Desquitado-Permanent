@@ -8,6 +8,14 @@ class Robot(ABC):
         self.name = name
         self.battery = battery
         Robot.population += 1
+    
+    def use_battery(self, amount):
+        self.battery -= amount
+        if self.battery < 0:
+            self.battery = 0
+            
+    def status(self):
+        return f"{self.name}: {self.battery}% battery"
         
     @property
     def battery(self):
@@ -49,3 +57,47 @@ print(f"Population: {Robot.population}")
 print(f"Manufacturer: {Robot.manufacturer}")
 print(f"{r3.name} Manufacturer: {r3.manufacturer}")
 print(r3.perform_task())
+
+print("\n--------------------\n")
+
+class CleaningRobot(Robot):
+    def __init__(self, name, battery=100, dust_capacity=500):
+        super().__init__(name, battery)
+        self.dust_capacity = dust_capacity
+        self.dust_collected = 0
+        
+    def perform_task(self, amount=50):
+        self.dust_collected = min(self.dust_capacity, self.dust_collected + amount)
+        self.use_battery(10)
+        return f"{self.name} cleaned {amount}g dust. Remaining battery: {self.battery}%"
+
+cr1 = CleaningRobot("CleaningRobot1", dust_capacity=200)
+print(cr1.name, cr1.dust_capacity)
+print(cr1.status())
+print(f"Population: {Robot.population}\n")
+
+print(cr1.dust_collected)
+print(cr1.perform_task(50))
+print(cr1.dust_collected)
+
+print("\n--------------------\n")
+
+class DroneRobot(Robot):
+    def __init__(self, name, battery=100, max_altitude=1000):
+        super().__init__(name, battery)
+        self.max_altitude = max_altitude
+        self.current_altitude= 0
+        
+    def perform_task(self, altitude=100):
+        self.current_altitude = min(self.max_altitude, self.current_altitude + altitude)
+        self.use_battery(20)
+        return f"{self.name} flew {altitude}m high. Remaining battery: {self.battery}%"
+
+dr1 = DroneRobot("DroneRobot1")
+print(dr1.name, dr1.max_altitude)
+print(dr1.status())
+print(f"Population: {Robot.population}\n")
+
+print(dr1.current_altitude)
+print(dr1.perform_task(100))
+print(dr1.current_altitude)
