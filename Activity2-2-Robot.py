@@ -121,6 +121,10 @@ class DroneRobot(Robot):
         self.current_altitude = min(self.max_altitude, self.current_altitude + altitude)
         return f"{self.name} flew {altitude}m high. Remaining battery: {self.battery}%"
     
+    def take_photo(self):
+        self.use_battery(5)
+        return f"{self.name} took an aerial photo from {self.current_altitude}m high"
+    
     def __str__(self):
         return f"{self.name}: {self.battery}% battery (Altitude: {self.current_altitude}m)"
 
@@ -211,5 +215,12 @@ wr3.equip("Missile")
 print("\nFIX:")
 print(f"wr3 weapons: {wr3.weapons}")
 print(f"wr4 weapons: {wr4.weapons}")
+
+print("\n--------------------\n")
+
+dr4 = DroneRobot("DroneRobot4", 50, 500)
+print(dr4.perform_task(250))
+print(dr4.take_photo())
+print(dr4)
 
 print("\n--------------------\n")
